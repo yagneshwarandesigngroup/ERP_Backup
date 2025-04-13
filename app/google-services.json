@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "342135830410",
+    "project_id": "chaterpapp",
+    "storage_bucket": "chaterpapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:342135830410:android:b91e32c12f09d99998fa73",
+        "android_client_info": {
+          "package_name": "com.ydg.chaterpapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCoxO1gYtAsAHlIDwSQ8zelTXgdx7c-ywc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
