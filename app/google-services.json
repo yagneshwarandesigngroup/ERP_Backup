@@ -7,12 +7,17 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:342135830410:android:b91e32c12f09d99998fa73",
+        "mobilesdk_app_id": "1:342135830410:android:732ccad1c333432598fa73",
         "android_client_info": {
-          "package_name": "com.ydg.chaterpapp"
+          "package_name": "com.plcoding.composegooglesignincleanarchitecture"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "342135830410-i2h83s4cl4erdpm57glfmra54m0f1o4o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCoxO1gYtAsAHlIDwSQ8zelTXgdx7c-ywc"
@@ -20,7 +25,49 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "342135830410-i2h83s4cl4erdpm57glfmra54m0f1o4o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:342135830410:android:b91e32c12f09d99998fa73",
+        "android_client_info": {
+          "package_name": "com.ydg.chaterpapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "342135830410-8pnkqh44pvnfbaeanq29g0ldkd85osu3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ydg.chaterpapp",
+            "certificate_hash": "e3625246ab3ba767a1b44fdd540d23db779033b4"
+          }
+        },
+        {
+          "client_id": "342135830410-i2h83s4cl4erdpm57glfmra54m0f1o4o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCoxO1gYtAsAHlIDwSQ8zelTXgdx7c-ywc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "342135830410-i2h83s4cl4erdpm57glfmra54m0f1o4o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

@@ -1,12 +1,18 @@
 package com.ydg.chaterpapp
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.PopupWindow
+import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.PopupWindowCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -25,32 +31,39 @@ class MainActivity : AppCompatActivity() {
     private lateinit var googleSignInClient: GoogleSignInClient
 
     // UI references
-    private lateinit var loginContainer: View
-    private lateinit var userInfoContainer: View
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var headerContainer: View
+    private lateinit var hamburgerIcon: View
+    private lateinit var userBubble: TextView
+    private lateinit var signInContainer: View
     private lateinit var signInButton: Button
-    private lateinit var signOutButton: Button
-    private lateinit var userInitialsTextView: TextView
-    private lateinit var userEmailTextView: TextView
+    private lateinit var mainUIContainer: View
+    private lateinit var progressBar: ProgressBar
+
+    // PopupWindow reference for the user dropdown
+    private var userPopup: PopupWindow? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Initialize view references
-        loginContainer = findViewById(R.id.login_container)
-        userInfoContainer = findViewById(R.id.user_info_container)
-        signInButton = findViewById(R.id.sign_in_button)
-        signOutButton = findViewById(R.id.sign_out_button)
-        userInitialsTextView = findViewById(R.id.user_initials)
-        userEmailTextView = findViewById(R.id.user_email)
-
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
 
-        // Check if a user is already signed in and update UI accordingly
+        // Find views
+        drawerLayout = findViewById(R.id.drawer_layout)
+        headerContainer = findViewById(R.id.header_container)
+        hamburgerIcon = findViewById(R.id.hamburger_icon)
+        userBubble = findViewById(R.id.user_bubble)
+        signInContainer = findViewById(R.id.sign_in_container)
+        signInButton = findViewById(R.id.sign_in_button)
+        mainUIContainer = findViewById(R.id.main_ui_container)
+        progressBar = findViewById(R.id.progress_bar)
+
+        // Check if user is already signed in and update UI accordingly
         updateUI(auth.currentUser?.email)
 
-        // Configure Google Sign-In. Ensure that strings.xml includes a valid default_web_client_id.
+        // Configure Google Sign-In
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
@@ -58,28 +71,67 @@ class MainActivity : AppCompatActivity() {
 
         googleSignInClient = GoogleSignIn.getClient(this, gso)
 
-        // Set click listener for the sign-in button
+        // Sign in button click
         signInButton.setOnClickListener { signIn() }
-        // Set click listener for the logout button
-        signOutButton.setOnClickListener { signOut() }
+
+        // Hamburger icon click to open sidebar
+        hamburgerIcon.setOnClickListener {
+            drawerLayout.openDrawer(androidx.core.view.GravityCompat.START)
+        }
+
+        // User bubble click to show popup dropdown anchored to bubble from right
+        userBubble.setOnClickListener {
+            if(userPopup?.isShowing == true){
+                userPopup?.dismiss()
+            } else {
+                showUserPopup()
+            }
+        }
+    }
+
+    // Create and show the PopupWindow anchored to the user bubble
+    private fun showUserPopup() {
+        val inflater = LayoutInflater.from(this)
+        val popupView = inflater.inflate(R.layout.popup_user_dropdown, null)
+
+        // Get popup views
+        val popupEmail = popupView.findViewById<TextView>(R.id.popup_email)
+        val popupLogout = popupView.findViewById<Button>(R.id.popup_logout)
+
+        // Set email text from current user
+        popupEmail.text = auth.currentUser?.email ?: ""
+
+        // Set logout click behavior
+        popupLogout.setOnClickListener {
+            signOut()
+            userPopup?.dismiss()
+        }
+
+        // Create the PopupWindow
+        userPopup = PopupWindow(popupView, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, true)
+
+        // Show the popup anchored to the user bubble with right alignment
+        PopupWindowCompat.showAsDropDown(userPopup!!, userBubble, 0, 0, android.view.Gravity.END)
     }
 
     private fun signIn() {
+        // Show progress animation
+        progressBar.visibility = View.VISIBLE
         val signInIntent = googleSignInClient.signInIntent
         startActivityForResult(signInIntent, RC_SIGN_IN)
     }
 
-    // Handle sign-in results
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RC_SIGN_IN) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
-                // Google Sign-In succeeded, now authenticate with Firebase
+                // Google Sign-In succeeded; authenticate with Firebase
                 val account = task.getResult(ApiException::class.java)!!
                 firebaseAuthWithGoogle(account.idToken!!)
             } catch (e: ApiException) {
                 Log.w(TAG, "Google sign in failed", e)
+                progressBar.visibility = View.GONE
             }
         }
     }
@@ -88,6 +140,7 @@ class MainActivity : AppCompatActivity() {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         auth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
+                progressBar.visibility = View.GONE
                 if (task.isSuccessful) {
                     Log.d(TAG, "signInWithCredential: success")
                     updateUI(auth.currentUser?.email)
@@ -97,32 +150,31 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
-    // Update UI based on sign-in state
+    // Update UI elements based on sign-in state
     private fun updateUI(email: String?) {
         if (email.isNullOrEmpty()) {
-            // Not signed in: show login container
-            loginContainer.visibility = View.VISIBLE
-            userInfoContainer.visibility = View.GONE
+            // Not signed in: show sign-in container; hide header and main UI
+            signInContainer.visibility = View.VISIBLE
+            headerContainer.visibility = View.GONE
+            mainUIContainer.visibility = View.GONE
         } else {
-            // Signed in: show user info container
-            loginContainer.visibility = View.GONE
-            userInfoContainer.visibility = View.VISIBLE
+            // Signed in: hide sign-in container; show header and main UI
+            signInContainer.visibility = View.GONE
+            headerContainer.visibility = View.VISIBLE
+            mainUIContainer.visibility = View.VISIBLE
 
-            // Get the first two characters from the email (or the whole email if it's less than 2 characters)
+            // Set the user bubble text to the first two characters of the email
             val initials = if (email.length >= 2) email.substring(0, 2) else email
-            userInitialsTextView.text = initials.uppercase()
-            userEmailTextView.text = email
+            userBubble.text = initials.uppercase()
         }
     }
 
-    // Sign out the current user
     private fun signOut() {
-        // Firebase sign out
         auth.signOut()
-        // Google sign out (optional, but recommended)
         googleSignInClient.signOut().addOnCompleteListener {
-            // Update UI to show sign-in screen after signing out
             updateUI(null)
+            // Dismiss the popup if it is showing
+            userPopup?.dismiss()
         }
     }
 }
