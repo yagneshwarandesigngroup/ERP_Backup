@@ -13,7 +13,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- Header: visible only when the user is logged in -->
+        <!-- Header (visible after login) -->
         <RelativeLayout
             android:id="@+id/header_container"
             android:layout_width="match_parent"
@@ -21,39 +21,56 @@
             android:background="@android:color/white"
             android:visibility="gone">
 
-            <!-- Hamburger Icon (left side) -->
+            <!-- Left side: hamburger + project name -->
             <LinearLayout
-                android:id="@+id/hamburger_icon"
+                android:id="@+id/left_container"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="8dp"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
                 android:layout_alignParentStart="true"
-                android:layout_centerVertical="true">
-                <!-- Top bar: wider -->
-                <View
-                    android:layout_width="24dp"
-                    android:layout_height="3dp"
-                    android:background="@android:color/black" />
-                <!-- Bottom bar: shorter -->
-                <View
-                    android:layout_width="16dp"
-                    android:layout_height="3dp"
-                    android:layout_marginTop="4dp"
-                    android:background="@android:color/black" />
+                android:gravity="center_vertical"
+                android:paddingStart="8dp">
+
+                <!-- Hamburger Icon -->
+                <LinearLayout
+                    android:id="@+id/hamburger_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="8dp">
+                    <View
+                        android:layout_width="24dp"
+                        android:layout_height="3dp"
+                        android:background="@android:color/black"/>
+                    <View
+                        android:layout_width="16dp"
+                        android:layout_height="3dp"
+                        android:layout_marginTop="4dp"
+                        android:background="@android:color/black"/>
+                </LinearLayout>
+
+                <!-- Current Project Name (50% smaller) -->
+                <TextView
+                    android:id="@+id/header_project_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Project A"
+                    android:textColor="@android:color/black"
+                    android:textSize="8sp"/>
             </LinearLayout>
 
-            <!-- Title in center -->
+            <!-- Title -->
             <TextView
                 android:id="@+id/header_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
                 android:text="ChatERP"
                 android:textColor="@android:color/black"
-                android:textSize="20sp"
-                android:layout_centerInParent="true" />
+                android:textSize="20sp"/>
 
-            <!-- User Bubble (right side) -->
+            <!-- User Bubble -->
             <TextView
                 android:id="@+id/user_bubble"
                 android:layout_width="40dp"
@@ -64,16 +81,17 @@
                 android:gravity="center"
                 android:textColor="@android:color/white"
                 android:textSize="16sp"
-                android:background="@drawable/circle_background" />
+                android:background="@drawable/circle_background"
+                android:visibility="gone"/>
         </RelativeLayout>
 
-        <!-- Content Area -->
+        <!-- Content Frame -->
         <FrameLayout
             android:id="@+id/content_frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <!-- Sign-In Container: shown only when not logged in -->
+            <!-- Sign‑in Container -->
             <LinearLayout
                 android:id="@+id/sign_in_container"
                 android:layout_width="match_parent"
@@ -84,47 +102,42 @@
                     android:id="@+id/sign_in_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sign in with Google" />
+                    android:text="Sign in with Google"/>
             </LinearLayout>
 
-            <!-- Main UI Container: visible when logged in -->
+            <!-- Main UI Container (after login) -->
             <LinearLayout
                 android:id="@+id/main_ui_container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:visibility="gone">
-                <!-- Additional app content goes here -->
+                <!-- your app’s main content goes here -->
             </LinearLayout>
 
-            <!-- Circular Progress Bar for loading -->
+            <!-- Loading Spinner -->
             <ProgressBar
                 android:id="@+id/progress_bar"
                 style="?android:attr/progressBarStyleLarge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:visibility="gone" />
-
+                android:visibility="gone"/>
         </FrameLayout>
     </LinearLayout>
 
     <!-- Sidebar Drawer -->
-    <LinearLayout
-        android:id="@+id/sidebar_drawer"
+    <ScrollView
         android:layout_width="250dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="@android:color/white"
-        android:orientation="vertical"
         android:padding="16dp">
-        <!-- Sidebar content (e.g., navigation items) -->
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/sidebar_list"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Sidebar Content"
-            android:textColor="@android:color/black"
-            android:textSize="18sp" />
-    </LinearLayout>
+            android:orientation="vertical"/>
+    </ScrollView>
 
 </androidx.drawerlayout.widget.DrawerLayout>

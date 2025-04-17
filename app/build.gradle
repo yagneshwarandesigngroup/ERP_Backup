@@ -50,9 +50,16 @@ dependencies {
     implementation libs.androidx.credentials.play.services.auth
     implementation libs.googleid
     // Add Google Play Services Auth dependency
-    implementation 'com.google.android.gms:play-services-auth:20.4.1'
+    implementation 'com.google.android.gms:play-services-auth:20.6.0'
     // Add AppCompat library if not already resolved
     implementation 'androidx.appcompat:appcompat:1.6.1'
+
+
+    // OkHttp for HTTP requests
+    implementation "com.squareup.okhttp3:okhttp:4.9.3"
+
+    // Kotlin coroutines for asynchronous operations
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0"
 
     testImplementation libs.junit
     androidTestImplementation libs.androidx.junit
